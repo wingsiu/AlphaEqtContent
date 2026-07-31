@@ -1,0 +1,99 @@
+{
+  "id": "dse2015-math-cp2",
+  "title": "2015 DSE MATH CP Paper 2",
+  "source_pdf": "2015-DSE-MATH-CP-2.pdf",
+  "dpi": 200,
+  "pages": [
+    {
+      "page": 1,
+      "file": "p01.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 2,
+      "file": "p02.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 3,
+      "file": "p03.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 4,
+      "file": "p04.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 5,
+      "file": "p05.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 6,
+      "file": "p06.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 7,
+      "file": "p07.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 8,
+      "file": "p08.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 9,
+      "file": "p09.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 10,
+      "file": "p10.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 11,
+      "file": "p11.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 12,
+      "file": "p12.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 13,
+      "file": "p13.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 14,
+      "file": "p14.png",
+      "w": 1654,
+      "h": 2339
+    },
+    {
+      "page": 15,
+      "file": "p15.png",
+      "w": 1654,
+      "h": 2339
+    }
+  ],
+  "ocr_md": "ocr/combined.md"
+}

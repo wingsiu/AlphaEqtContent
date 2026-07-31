@@ -1,0 +1,5 @@
+# Python deps for Tools/mathtype_docx_to_latex.py
+mathtypejx @ git+https://github.com/a917470154/mathtypejx.git
+mathml-to-latex>=1.0.0
+olefile>=0.46
+lxml>=4.9
