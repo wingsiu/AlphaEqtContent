@@ -1386,7 +1386,9 @@ body {
   .preview img.preview-figure.figure-right {
     float: right;
     clear: right;
-    max-width: 100%;
+    /* Leave room for options when the float would otherwise dominate. */
+    max-width: min(42%, 280px);
+    max-height: 36vh;
     width: auto;
     height: auto;
     margin: 0.05rem 0 0.75rem 1rem;
