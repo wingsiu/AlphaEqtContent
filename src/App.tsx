@@ -166,7 +166,11 @@ function PreviewUl({
       >
         {children}
       </ul>
-      <div className="figure-clear" aria-hidden="true" />
+      {/* Clear float only after A–D — after roman it drops options below the
+          figure and opens a tall gap (p12 Q36). */}
+      {!isRomanList ? (
+        <div className="figure-clear" aria-hidden="true" />
+      ) : null}
     </>
   )
 }
@@ -203,15 +207,20 @@ function makePreviewImg(markdown: string) {
     const a = alt ?? ''
     const isFigure =
       typeof resolved === 'string' &&
-      (resolved.includes('figure') || a.startsWith('figure'))
+      (resolved.includes('figure') ||
+        resolved.includes('table') ||
+        a.startsWith('figure') ||
+        a.startsWith('table'))
     const side =
       a.startsWith('figure-right') || a === 'figure-right'
         ? 'right'
-        : a.startsWith('figure-block') || a === 'figure-block'
-          ? 'block'
-          : isFigure
+        : a.startsWith('table-block') || a === 'table-block'
+          ? 'table'
+          : a.startsWith('figure-block') || a === 'figure-block'
             ? 'block'
-            : ''
+            : isFigure
+              ? 'block'
+              : ''
     if (!isFigure) {
       return <img {...props} src={resolved || src} alt={a} />
     }
@@ -223,7 +232,9 @@ function makePreviewImg(markdown: string) {
         className={
           side === 'right'
             ? 'preview-figure figure-right'
-            : 'preview-figure figure-block'
+            : side === 'table'
+              ? 'preview-figure table-block'
+              : 'preview-figure figure-block'
         }
       />
     )
@@ -1261,8 +1272,8 @@ export default function App() {
         remarkPlugins={[
           remarkGfm,
           remarkBreaks,
-          // Preview string uses $…$ for inline (currency already plain unpaired $N)
-          [remarkMath, { singleDollarTextMath: true }],
+          // Inline math only via \(…\)→$$…$$; never bare $abd$ (breaks \$36…\$6)
+          [remarkMath, { singleDollarTextMath: false }],
         ]}
         rehypePlugins={[
           [
@@ -1274,10 +1285,7 @@ export default function App() {
                 scale: 1,
               },
               tex: {
-                inlineMath: [
-                  ['$', '$'],
-                  ['\\(', '\\)'],
-                ],
+                inlineMath: [['\\(', '\\)']],
                 displayMath: [
                   ['$$', '$$'],
                   ['\\[', '\\]'],

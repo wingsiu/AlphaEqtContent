@@ -1119,7 +1119,12 @@ body {
 
 .preview table {
   border-collapse: collapse;
-  margin: 0.4rem 0 0.75rem;
+  /* No forced grid; centre the whole table in the stem band (from 1cm). */
+  width: max-content;
+  max-width: calc(100% - 1cm);
+  margin: 0.45rem auto 0.85rem;
+  position: relative;
+  left: 0.5cm; /* shift page-centre → centre of [1cm, 100%] */
   font-family: "Times New Roman", Times, serif;
   font-size: 12pt;
 }
@@ -1127,9 +1132,10 @@ body {
 .preview th,
 .preview td {
   border: none;
-  padding: 0.15rem 0.55rem;
+  padding: 0.12rem 0.5rem;
   text-align: center;
-  min-width: 1.4rem;
+  min-width: 1.25rem;
+  font-weight: normal;
 }
 
 .preview h1,
@@ -1364,12 +1370,13 @@ body {
   margin: 0.15rem 0 0.35rem;
 }
 
-.preview img.preview-figure.figure-block {
+.preview img.preview-figure.figure-block,
+.preview img.preview-figure.table-block {
   float: none;
   clear: both;
   display: block;
-  max-width: min(96%, 560px);
-  max-height: 42vh;
+  /* Native crop pixels — only shrink to fit the preview column. */
+  max-width: 100%;
   width: auto;
   height: auto;
   margin: 0.35rem auto 0.75rem;
@@ -1379,8 +1386,9 @@ body {
   .preview img.preview-figure.figure-right {
     float: right;
     clear: right;
-    max-width: min(48%, 320px);
-    max-height: 40vh;
+    max-width: 100%;
+    width: auto;
+    height: auto;
     margin: 0.05rem 0 0.75rem 1rem;
   }
 
@@ -1403,7 +1411,9 @@ body {
 @media (max-width: 719px) {
   .preview img.preview-figure.figure-right {
     float: none;
-    max-width: min(96%, 480px);
+    max-width: 100%;
+    width: auto;
+    height: auto;
     margin: 0.35rem auto 0.85rem;
   }
 }

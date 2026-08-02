@@ -1,7 +1,7 @@
 /**
  * Source markdown uses \( ... \) for inline math and $$ ... $$ for display.
- * Currency stays as \$36 — bare $…$ is unsafe even with singleDollarTextMath:false
- * because leftover $ pairs / MathJax can still mangle "$36 … $6".
+ * Currency stays as \$36. Preview disables single-`$` inline math (`$abd$`)
+ * so `$36 … $6` cannot pair; remark-math uses `$$…$$` for inline only.
  */
 
 /** Repair form-feed corruption: \f + rac → \\frac (shows as □rac). */
@@ -117,9 +117,10 @@ function isRunawayMath(body: string, maxLen: number): boolean {
 /**
  * Preview cleanup. Source keeps \( … \) and \$36.
  *
- * remark-math: `$…$` = inline, `$$…$$` = display. Never turn \(…\) into $$…$$
- * (that made every formula a block and broke Q9/Q10 list/stem tabs).
- * Currency is held aside so `$50000` cannot open math.
+ * remark-math with ``singleDollarTextMath: false``: bare `$abd$` is plain text.
+ * Inline math is same-line ``$$…$$`` (not display ``$$\n…\n$$``). Convert
+ * ``\(…\)`` → ``$$…$$`` for parsing; never leave single-`$` delimiters.
+ * Currency held aside then restored as plain `$` (safe without single-dollar math).
  *
  * Hold existing math **before** any inequality/signed wraps — otherwise
  * ``\(18+7x>4\)`` becomes ``$18+\(7x>4$\)`` (p3 Q6). GFM also treats ``<``
@@ -232,14 +233,15 @@ export function prepareMarkdownForPreview(md: string): string {
       .replace(/(?<!\\)</g, '\\lt ')
       .replace(/(?<!\\)>/g, '\\gt ')
 
-  // \(…\) → $…$ inline for remark-math (NOT $$ — that is display/block)
+  // \(…\) → same-line $$…$$ for remark-math inline (single-$ disabled).
+  // Display blocks were held above as $$\n…\n$$ — do not use bare $…$.
   s = s.replace(/\\\(([\s\S]+?)\\\)/g, (_full, body: string) => {
     if (isRunawayMath(body, 350)) return ''
-    return `$${gfmSafeMathBody(body)}$`
+    return `$$${gfmSafeMathBody(body)}$$`
   })
 
   s = s.replace(/\u0000D(\d+)\u0000/g, (_, i: string) => displays[Number(i)]!)
-  // Restore currency as plain $ (Times) — unpaired $50000 is not math
+  // Currency: plain $ is safe now (single-dollar inline math is off)
   s = s.replace(/\uE000/g, '$')
   return s.replace(/\n{3,}/g, '\n\n').trim() + '\n'
 }
