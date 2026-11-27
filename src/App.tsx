@@ -51,6 +51,14 @@ import {
   type MfdRegionEdit,
 } from './PageCropEditor'
 import SAMPLE from './samples/dse2015_math_cp2_ocr.md?raw'
+import ContentPages from './ContentPages'
+import {
+  contentRouteHash,
+  contentScreenTitle,
+  parseContentRoute,
+  sameContentRoute,
+  type ContentRoute,
+} from './contentPageRoute'
 import './App.css'
 
 const DEFAULT_HOKSI =
@@ -1308,19 +1316,83 @@ export default function App() {
     [markdown],
   )
 
+  const [route, setRoute] = useState<ContentRoute>(() =>
+    parseContentRoute(window.location.hash),
+  )
+
+  useEffect(() => {
+    const sync = () => setRoute(parseContentRoute(window.location.hash))
+    window.addEventListener('hashchange', sync)
+    return () => window.removeEventListener('hashchange', sync)
+  }, [])
+
+  useEffect(() => {
+    if (route.screen !== 'editor') setCropModalOpen(false)
+  }, [route.screen])
+
+  useEffect(() => {
+    const slug = route.screen === 'pages' ? route.slug : null
+    document.title =
+      route.screen === 'pages'
+        ? slug
+          ? 'Content page · AlphaEqt Content'
+          : 'Create page · AlphaEqt Content'
+        : 'AlphaEqt Content'
+    return () => {
+      document.title = 'AlphaEqt Content'
+    }
+  }, [route])
+
+  function goRoute(next: ContentRoute) {
+    if (sameContentRoute(parseContentRoute(window.location.hash), next)) {
+      setRoute(next.screen === 'editor' ? { screen: 'editor' } : next)
+      return
+    }
+    const hash = contentRouteHash(next)
+    window.location.hash = hash
+    setRoute(parseContentRoute(hash))
+  }
+
   return (
     <div className="app">
       <header className="top">
         <div>
           <p className="brand">AlphaEqt Content</p>
-          <h1>Markdown + preview</h1>
+          <h1>{contentScreenTitle(route)}</h1>
+          <nav className="app-nav" aria-label="Primary">
+            <button
+              type="button"
+              className={route.screen === 'editor' ? 'is-active' : ''}
+              aria-current={route.screen === 'editor' ? 'page' : undefined}
+              onClick={() => goRoute({ screen: 'editor' })}
+            >
+              Markdown
+            </button>
+            <button
+              type="button"
+              className={
+                route.screen === 'pages' ? 'is-active nav-create' : 'nav-create'
+              }
+              aria-current={route.screen === 'pages' ? 'page' : undefined}
+              onClick={() => goRoute({ screen: 'pages', slug: null })}
+            >
+              Create page
+            </button>
+          </nav>
         </div>
-        <p className="hint">
+        {route.screen === 'pages' ? (
+          <p className="hint">
+            A content page is a draft list of atoms (text, question, figure).
+            It is not an OCR scan page. Publish when the draft is ready.
+          </p>
+        ) : (
+          <p className="hint">
           Inline math: <code>{'\\(...\\)'}</code> · Display:{' '}
           <code>{'$$...$$'}</code> · Currency: <code>{'\\$36'}</code> · MCQ{' '}
           <code>A.</code>–<code>D.</code>
           <br />
-          Type MD, import Word, OCR, or download from Hoksi.
+          Type MD, import Word, OCR, or download from Hoksi. Use Create page
+          for a draft content page.
           {importStatus ? (
             <>
               <br />
@@ -1339,9 +1411,19 @@ export default function App() {
               <span className="import-status">{hoksiStatus}</span>
             </>
           ) : null}
-        </p>
+          </p>
+        )}
       </header>
 
+      {route.screen === 'pages' ? (
+        <ContentPages
+          slug={route.slug}
+          onOpenSlug={(slug) => goRoute({ screen: 'pages', slug })}
+          onShowCreate={() => goRoute({ screen: 'pages', slug: null })}
+        />
+      ) : null}
+
+      <div hidden={route.screen !== 'editor'}>
       <section className="import-bar">
         <label className="import-field">
           <span>Hoksi topic URL / slug</span>
@@ -1831,6 +1913,7 @@ export default function App() {
           </div>
         </div>
       ) : null}
+      </div>
     </div>
   )
 }
