@@ -34,6 +34,12 @@ export default defineConfig({
         timeout: 0,
         rewrite: (path) => path.replace(/^\/api\/page-ocr/, ''),
       },
+      // Editorial content pages — uvicorn editorial_api:app (AlphaEqt db/)
+      '/api/editorial': {
+        target: 'http://127.0.0.1:8505',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/editorial/, ''),
+      },
     },
   },
 })
